@@ -1,25 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useFind, useSubscribe } from "meteor/react-meteor-data";
 import { LinksCollection } from "../api/links";
-
-function insertLink({ title, url, user }) {
-  LinksCollection.insert({
-    title,
-    url,
-    userId: user._id,
-    createdAt: new Date(),
-  });
-}
-
-function updateLink({ _id, title, url }) {
-  LinksCollection.update(_id, {
-    $set: { title, url },
-  });
-}
-
-function deleteLink(_id) {
-  LinksCollection.remove({ _id });
-}
+import { Meteor } from "meteor/meteor";
 
 export const Info = ({ user }) => {
   const isLoading = useSubscribe("links");
@@ -92,7 +74,9 @@ export const Info = ({ user }) => {
               >
                 Edit
               </button>
-              <button onClick={() => deleteLink(link._id)}>Delete</button>
+              <button onClick={() => Meteor.call("links.remove", link._id)}>
+                Delete
+              </button>
             </li>
           ))}
         </ul>
@@ -119,8 +103,8 @@ export const Info = ({ user }) => {
         <button
           onClick={() => {
             !!newLink._id
-              ? updateLink(newLink)
-              : insertLink({ ...newLink, user });
+              ? Meteor.call("links.update", newLink)
+              : Meteor.call("links.insert", newLink);
             setNewLink({
               _id: "",
               title: "",

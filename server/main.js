@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Accounts } from "meteor/accounts-base";
 import { LinksCollection } from "/imports/api/links";
+import "../imports/api/linksMethods";
 
 async function insertLink({ title, url, user }) {
   await LinksCollection.insertAsync({
